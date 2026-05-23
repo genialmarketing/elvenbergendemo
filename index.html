@@ -29,7 +29,14 @@
 <meta name="ICBM" content="60.3913, 5.3221">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Caveat:wght@600;700&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<!-- Preload the single most critical font — Cormorant for the hero title -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Sans:wght@300;400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Sans:wght@300;400&display=swap" media="print" onload="this.media='all'">
+<!-- Caveat and DM Mono are only used in the guestbook section — load async -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Mono:wght@400&display=swap" media="print" onload="this.media='all'">
+<noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Sans:wght@300;400&family=Caveat:wght@600;700&family=DM+Mono:wght@400&display=swap">
+</noscript>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"BarOrPub","name":"Elven Bar","url":"https://genialmarketing.github.io/elvenbergendemo","telephone":"+4790595557","address":{"@type":"PostalAddress","streetAddress":"Vaskerelvsmauet 7","postalCode":"5014","addressLocality":"Bergen","addressCountry":"NO"},"geo":{"@type":"GeoCoordinates","latitude":60.3913,"longitude":5.3221},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Sunday"],"opens":"17:00","closes":"01:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Friday","Saturday"],"opens":"15:00","closes":"01:30"}],"servesCuisine":"Cocktails","priceRange":"$$","hasMenu":"https://genialmarketing.github.io/elvenbergendemo/meny/","image":"https://elvenbar.no/wp-content/uploads/2026/05/the_game.png","menu":{"@type":"Menu","hasMenuSection":[{"@type":"MenuSection","name":"Beginner Trail","hasMenuItem":[{"@type":"MenuItem","name":"Funicular Ride","description":"Light and refreshing, with bright citrus, soft peach sweetness and elegant hints of tea and bergamot.","offers":{"@type":"Offer","price":"179","priceCurrency":"NOK"}},{"@type":"MenuItem","name":"Figment of My Imagination","description":"Herbal, slightly bitter and refreshingly odd — blueberries, citrus and green aromatic notes.","offers":{"@type":"Offer","price":"179","priceCurrency":"NOK"}},{"@type":"MenuItem","name":"Cross Country Ski","description":"Clean and refreshing, with crisp citrus acidity, subtle herbal notes from basil and a light Nordic sweetness.","offers":{"@type":"Offer","price":"179","priceCurrency":"NOK"}}]},{"@type":"MenuSection","name":"Intermediate Trail","hasMenuItem":[{"@type":"MenuItem","name":"Catch & Release","description":"Smooth, gently spiced and quietly comforting.","offers":{"@type":"Offer","price":"179","priceCurrency":"NOK"}},{"@type":"MenuItem","name":"Whistling at the Top","description":"Sharp, cherry-led and spirit-forward, with teetering sweet and sour balance.","offers":{"@type":"Offer","price":"179","priceCurrency":"NOK"}}]},{"@type":"MenuSection","name":"Advanced Trail","hasMenuItem":[{"@type":"MenuItem","name":"Apples & Cherries","description":"Smooth and warming, with ripe fruit sweetness, gentle spice and a crisp cider finish.","offers":{"@type":"Offer","price":"179","priceCurrency":"NOK"}},{"@type":"MenuItem","name":"Irish Morning Coffee","description":"Rich, comforting and gently boozy, with caramel sweetness and a creamy finish.","offers":{"@type":"Offer","price":"179","priceCurrency":"NOK"}}]},{"@type":"MenuSection","name":"Expert Trail","hasMenuItem":[{"@type":"MenuItem","name":"The Game","description":"Bold, bittersweet and spirit-forward, with classic cocktail structure and zero forgiveness.","offers":{"@type":"Offer","price":"179","priceCurrency":"NOK"}},{"@type":"MenuItem","name":"The King's Speech","description":"Powerful, balanced and unmistakably serious — built for slow sipping and deep thought.","offers":{"@type":"Offer","price":"799","priceCurrency":"NOK"}}]}]}}
 </script>
@@ -39,7 +46,7 @@
   --black:#0a0906;--deep:#111009;--warm-dark:#1a1710;--surface:#201e17;--surface-2:#2a2820;
   --gold:#c9a84c;--gold-light:#e2c47a;--gold-pale:#f0dca0;
   --cream:#f5f0e8;--cream-muted:#d4cdc0;--text-muted:#8a8070;--text-mid:#b0a898;
-  --serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',sans-serif;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 }
 html{scroll-behavior:smooth}
 body{background:var(--black);color:var(--cream);font-family:var(--sans);font-weight:300;overflow-x:hidden}
@@ -111,17 +118,24 @@ nav.scrolled{background:rgba(10,9,6,.97);border-bottom:.5px solid rgba(201,168,7
 .hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
 .hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
 
-/* Mobile drawer */
+/* Mobile drawer — alltid display:flex, skjult via opacity+pointer-events */
 .mobile-nav{
-  display:none;
+  display:flex;
   position:fixed;top:0;left:0;right:0;bottom:0;
   background:rgba(10,9,6,.97);
   z-index:105;
   flex-direction:column;justify-content:center;align-items:center;
   gap:2.5rem;
-  opacity:0;transition:opacity .3s ease;
+  opacity:0;
+  pointer-events:none;
+  visibility:hidden;
+  transition:opacity .3s ease, visibility .3s ease;
 }
-.mobile-nav.open{opacity:1}
+.mobile-nav.open{
+  opacity:1;
+  pointer-events:auto;
+  visibility:visible;
+}
 .mobile-nav a{
   font-size:1.5rem;letter-spacing:.2em;text-transform:uppercase;
   color:var(--cream-muted);text-decoration:none;
@@ -204,16 +218,18 @@ footer{background:var(--black);border-top:.5px solid rgba(201,168,76,.12);paddin
   nav{padding:1.25rem 1.5rem}
   .nav-links{display:none}
   .hamburger{display:flex}
-  .mobile-nav{display:flex}
   .hero{padding:0 1.5rem 4rem}
-  .hero-title{font-size:3.5rem}
+  .hero-title{font-size:3rem}
   .hero-hours{display:none}
   .about-strip,.booking-section{grid-template-columns:1fr;gap:3rem;padding:4rem 1.5rem}
   .about-image-grid{grid-template-columns:1fr}
-  .sig-section{padding:4rem 1.5rem}
+  .sig-section{padding:3rem 1rem 4rem}
   .footer-top{grid-template-columns:1fr 1fr;gap:2rem}
   footer{padding:3rem 1.5rem 2rem}
   .section-header{flex-direction:column;align-items:flex-start;gap:1rem}
+  /* Polaroid grid → single column on mobile */
+  .polaroid-grid{grid-template-columns:1fr !important;max-width:380px;margin:0 auto}
+  .polaroid-grid > div{transform:none !important}
 }
 </style>
 </head>
@@ -235,7 +251,7 @@ footer{background:var(--black);border-top:.5px solid rgba(201,168,76,.12);paddin
 <!-- Mobile nav drawer -->
 <div class="mobile-nav" id="mobileNav" aria-hidden="true">
   <a href="#about" onclick="closeMenu()">About</a>
-  <a href="/elvenbergendemo/meny/" onclick="closeMenu()">Menu</a>
+  <a href="/elvenbergendemo/meny/">Menu</a>
   <a href="#find-us" onclick="closeMenu()">Find us</a>
   <a href="#book" class="mobile-book" onclick="closeMenu()">Book a table</a>
 </div>
@@ -302,7 +318,7 @@ footer{background:var(--black);border-top:.5px solid rgba(201,168,76,.12);paddin
       <a href="/elvenbergendemo/meny/" style="font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:#5a4e3e;text-decoration:none;display:flex;align-items:center;gap:.4rem;white-space:nowrap;transition:color .2s" onmouseover="this.style.color='#2a2118'" onmouseout="this.style.color='#5a4e3e'">Full menu →</a>
     </div>
 
-    <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:2rem;align-items:start;width:100%;">
+    <div class="polaroid-grid" style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:2rem;align-items:start;width:100%;">
 
       <!-- Funicular Ride -->
       <div class="reveal" style="background:#f2ead8;box-shadow:3px 5px 20px rgba(0,0,0,.2);border:1px solid rgba(160,140,100,.2);transform:rotate(-.7deg);position:relative;">
@@ -440,9 +456,9 @@ function closeMenu(){
   ham.setAttribute('aria-expanded','false');
   document.body.style.overflow='';
 }
-ham.addEventListener('click',()=>{
+function toggleMenu(){
   const isOpen=mob.classList.contains('open');
-  if(isOpen){closeMenu()}
+  if(isOpen){closeMenu();}
   else{
     ham.classList.add('open');
     mob.classList.add('open');
@@ -450,9 +466,9 @@ ham.addEventListener('click',()=>{
     ham.setAttribute('aria-expanded','true');
     document.body.style.overflow='hidden';
   }
-});
-// Close on escape
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+}
+ham.addEventListener('click',toggleMenu);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
 </script>
 </body>
 </html>
